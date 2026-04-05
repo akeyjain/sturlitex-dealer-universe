@@ -529,7 +529,6 @@ import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serve
 import { getStorage, ref, uploadBytes, getDownloadURL }
                                                    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-// ── ⚙️  PASTE YOUR FIREBASE CONFIG HERE ───────────────────
 const firebaseConfig = {
   apiKey:            "AIzaSyCqC9q8TtbvvztjZmVQtYgYkJIqByGTPC4",
   authDomain:        "sturlite-dealer-universe-a50d6.firebaseapp.com",
@@ -538,7 +537,6 @@ const firebaseConfig = {
   messagingSenderId: "1020321304899",
   appId:             "1:1020321304899:web:69ff6d5e7e7acb83fa5ff6"
 };
-// ──────────────────────────────────────────────────────────
 
 const app     = initializeApp(firebaseConfig);
 const auth    = getAuth(app);
@@ -547,23 +545,19 @@ const storage = getStorage(app);
 
 // ── Executive → Cluster mapping ────────────────────────────
 const EXEC_MAP = {
-  "prakash@sturlitex.com":    { name:"Prakash",    cluster:"Zone-1 Hyderabad" },
-  "vacant.z2@sturlitex.com":  { name:"Vacant",     cluster:"Zone-2 Hyderabad" },
-  "vacant.z3@sturlitex.com":  { name:"Vacant",     cluster:"Zone-3 Hyderabad" },
-  "joshvith@sturlitex.com":   { name:"Joshvith",   cluster:"Zone-4 Hyderabad" },
-  "vacant.rp@sturlitex.com":  { name:"Vacant",     cluster:"Zone-RP Road" },
-  "vacant.tb@sturlitex.com":  { name:"Vacant",     cluster:"Zone-Troop Bazar" },
-  "shekar@sturlitex.com":     { name:"Shekar",     cluster:"Mahabubnagar" },
-  "vacant.ak@sturlitex.com":  { name:"Vacant",     cluster:"Anantapur & Kurnool" },
-  "saidulu@sturlitex.com":    { name:"Saidulu",    cluster:"Nalgonda" },
-  "kiran@sturlitex.com":      { name:"Kiran",      cluster:"Khammam" },
-  "j.srikanth@sturlitex.com": { name:"J Srikanth", cluster:"Warangal" },
-  "ch.srikanth@sturlitex.com":{ name:"Ch Srikanth",cluster:"Nizamabad & Adilabad" },
-  "saikumar@sturlitex.com":   { name:"Sai Kumar",  cluster:"Mancherial & Jagtial" },
-  "dheeraj@sturlitex.com":    { name:"Dheeraj",    cluster:"Karimnagar & Siddipet" },
-  "vacant.sg@sturlitex.com":  { name:"Vacant",     cluster:"Sangareddy" },
-  "ankit@sturlitex.com":      { name:"Ankit",      cluster:"Admin", role:"admin" },
-  "rajendra@sturlitex.com":   { name:"Rajendra",   cluster:"Admin", role:"admin" },
+  "prakashgoud19941994@gmail.com": { name:"Prakash",    cluster:"Zone-1 Hyderabad" },
+  "joshvithartham@gmail.com":      { name:"Joshvith",   cluster:"Zone-4 Hyderabad" },
+  "mudhirajchintu532@gmail.com":   { name:"Shekar",     cluster:"Mahabubnagar" },
+  "saidulumudiga187@gmail.com":    { name:"Saidulu",    cluster:"Nalgonda" },
+  "kirankumar.vulli@gmail.com":    { name:"Kiran",      cluster:"Khammam" },
+  "srikanthjenda@gmail.com":       { name:"J Srikanth", cluster:"Warangal" },
+  "srikanthsunrise8@gmail.com":    { name:"Ch Srikanth",cluster:"Nizamabad & Adilabad" },
+  "saikumarpettam@gmail.com":      { name:"Sai Kumar",  cluster:"Mancherial & Jagtial" },
+  "dheerajrockz333@gmail.com":     { name:"Dheeraj",    cluster:"Karimnagar & Siddipet" },
+  "akeyjain@gmail.com":            { name:"Ankit",      cluster:"Admin", role:"admin" },
+  "tcs.rajendra@gmail.com":        { name:"Rajendra",   cluster:"Admin", role:"admin" },
+  "info.sturlitehyderabad@gmail.com": { name:"Provision-1", cluster:"Admin", role:"admin" },
+  "hydsepldata@gmail.com":         { name:"Provision-2", cluster:"Admin", role:"admin" },
 };
 
 // ── State ──────────────────────────────────────────────────
@@ -702,6 +696,28 @@ function removeCard() {
   document.getElementById("photo-box").classList.remove("hidden");
 }
 
+// ── Compress image to base64 ───────────────────────────────
+function compressAndEncodeImage(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxW = 800, maxH = 800;
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = h * maxW / w; w = maxW; }
+        if (h > maxH) { w = w * maxH / h; h = maxH; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.6));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 // ── Submit dealer ──────────────────────────────────────────
 async function submitDealer() {
   const errEl = document.getElementById("form-error");
@@ -730,10 +746,8 @@ async function submitDealer() {
   btn.textContent = "Saving..."; btn.disabled = true;
 
   try {
-    // Upload visiting card
-    const imgRef  = ref(storage, `visiting-cards/${currentUser.uid}/${Date.now()}_${cardFile.name}`);
-    await uploadBytes(imgRef, cardFile);
-    const cardUrl = await getDownloadURL(imgRef);
+    // Convert visiting card to compressed base64 and store directly in Firestore
+    const cardUrl = await compressAndEncodeImage(cardFile);
 
     // Save to Firestore
     await addDoc(collection(db,"dealers"), {
