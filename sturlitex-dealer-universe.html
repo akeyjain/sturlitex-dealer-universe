@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#f5ede0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>SturliteX — Dealer's Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+/* ── Reset & tokens ──────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f5ede0;
+  --cream-dark:#eddec8;
+  --ink:#1a1208;
+  --ink-mid:#4a3f2f;
+  --ink-light:#8a7a65;
+  --gold:#c8831a;
+  --gold-light:#f0c060;
+  --gold-bg:#fef3dc;
+  --white:#ffffff;
+  --red:#b83232;
+  --red-light:#fdeaea;
+  --green:#2d6a4f;
+  --green-light:#d8f3dc;
+  --border:rgba(26,18,8,0.12);
+  --border-mid:rgba(26,18,8,0.22);
+  --r-sm:10px;
+  --r-md:16px;
+  --r-lg:24px;
+  --r-xl:32px;
+  --shadow:0 2px 12px rgba(26,18,8,0.08);
+  --shadow-lg:0 8px 32px rgba(26,18,8,0.14);
+}
+
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased}
+
+/* ── Layout ──────────────────────────────────────────────── */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── Login screen ────────────────────────────────────────── */
+#screen-login{
+  background:var(--cream);
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  position:relative;
+  overflow:hidden;
+}
+#screen-login::before{
+  content:'';position:absolute;top:-120px;right:-80px;
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,131,26,0.12),transparent 70%);
+  pointer-events:none;
+}
+#screen-login::after{
+  content:'';position:absolute;bottom:-80px;left:-60px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,131,26,0.08),transparent 70%);
+  pointer-events:none;
+}
+
+.login-card{
+  width:100%;max-width:420px;
+  background:var(--white);
+  border-radius:var(--r-xl);
+  padding:36px 32px 32px;
+  box-shadow:var(--shadow-lg);
+  border:0.5px solid var(--border);
+  position:relative;z-index:1;
+  animation:slideUp 0.4s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.logo-wrap{text-align:center;margin-bottom:28px}
+.logo-wrap img{height:52px;object-fit:contain}
+.logo-tagline{font-family:'DM Serif Display',serif;font-style:italic;font-size:13px;color:var(--gold);margin-top:4px;letter-spacing:0.02em}
+.login-title{font-family:'DM Serif Display',serif;font-size:22px;text-align:center;margin-bottom:6px;color:var(--ink)}
+.login-sub{font-size:13px;color:var(--ink-light);text-align:center;margin-bottom:24px}
+
+/* ── Form elements ───────────────────────────────────────── */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase}
+.field label .req{color:var(--gold);margin-left:2px}
+.field input,.field select,.field textarea{
+  width:100%;padding:13px 16px;
+  border:1.5px solid var(--border-mid);
+  border-radius:var(--r-md);
+  font-size:15px;font-family:'DM Sans',sans-serif;
+  background:var(--cream);color:var(--ink);
+  outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+  -webkit-appearance:none;appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(200,131,26,0.15);
+  background:var(--white);
+}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath fill='%238a7a65' d='M6 7L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  padding-right:38px;cursor:pointer;
+}
+.field select option[disabled]{color:var(--ink-light)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.field-hint{font-size:11px;color:var(--ink-light);margin-top:5px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.field-row{grid-template-columns:1fr}}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px;border-radius:var(--r-md);
+  font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;
+  border:none;cursor:pointer;transition:all 0.18s;
+}
+.btn:active{transform:scale(0.98)}
+.btn-gold{background:var(--gold);color:var(--white)}
+.btn-gold:hover{background:#b87518;box-shadow:0 4px 16px rgba(200,131,26,0.35)}
+.btn-gold:disabled{opacity:0.55;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--gold);border:1.5px solid var(--gold)}
+.btn-outline:hover{background:var(--gold-bg)}
+.btn-ghost{background:var(--cream);color:var(--ink-mid);border:1.5px solid var(--border-mid)}
+.btn-ghost:hover{background:var(--cream-dark)}
+.btn-sm{padding:9px 16px;font-size:13px;width:auto;border-radius:var(--r-sm)}
+.btn-danger{background:var(--red-light);color:var(--red);border:1.5px solid rgba(184,50,50,0.2)}
+
+/* ── Error / success ─────────────────────────────────────── */
+.alert{padding:12px 16px;border-radius:var(--r-sm);font-size:13px;margin-bottom:16px;font-weight:500}
+.alert-error{background:var(--red-light);color:var(--red);border:1px solid rgba(184,50,50,0.2)}
+.alert-success{background:var(--green-light);color:var(--green);border:1px solid rgba(45,106,79,0.2)}
+
+/* ── App shell ───────────────────────────────────────────── */
+#screen-app{background:var(--cream);flex-direction:column}
+
+.topbar{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-logo{display:flex;align-items:center;gap:10px}
+.topbar-logo img{height:32px;object-fit:contain}
+.topbar-info{font-size:12px;color:var(--ink-light);font-weight:500}
+.topbar-user{font-size:13px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:8px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--white);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── Page tabs ───────────────────────────────────────────── */
+.tab-bar{
+  display:flex;gap:0;
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;
+  overflow-x:auto;
+}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{
+  padding:12px 18px;font-size:13px;font-weight:600;
+  border:none;background:none;cursor:pointer;
+  color:var(--ink-light);border-bottom:2.5px solid transparent;
+  white-space:nowrap;transition:color 0.15s,border-color 0.15s;
+  font-family:'DM Sans',sans-serif;
+}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-btn:hover:not(.active){color:var(--ink-mid)}
+
+/* ── Page content ────────────────────────────────────────── */
+.page-content{flex:1;padding:20px;max-width:640px;margin:0 auto;width:100%;padding-bottom:80px}
+
+/* ── Registration form card ──────────────────────────────── */
+.form-card{
+  background:var(--white);border-radius:var(--r-xl);
+  padding:28px 24px;box-shadow:var(--shadow);
+  border:0.5px solid var(--border);
+  animation:slideUp 0.3s ease;
+}
+.form-card-title{
+  font-family:'DM Serif Display',serif;font-size:22px;
+  color:var(--ink);margin-bottom:4px;
+}
+.form-card-sub{font-size:13px;color:var(--ink-light);margin-bottom:24px}
+.section-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:20px 0 16px;
+}
+.section-divider span{font-size:11px;font-weight:700;color:var(--ink-light);letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── Location button ─────────────────────────────────────── */
+.location-box{
+  border:1.5px dashed var(--border-mid);border-radius:var(--r-md);
+  padding:16px;text-align:center;background:var(--cream);
+  transition:border-color 0.2s,background 0.2s;cursor:pointer;
+}
+.location-box.captured{border-style:solid;border-color:var(--green);background:var(--green-light);cursor:default}
+.location-box.error-state{border-color:var(--red);background:var(--red-light)}
+.location-icon{font-size:28px;margin-bottom:6px}
+.location-text{font-size:13px;font-weight:600;color:var(--ink-mid);margin-bottom:2px}
+.location-sub{font-size:12px;color:var(--ink-light)}
+.location-coords{font-size:12px;color:var(--green);font-weight:600;margin-top:4px;font-family:monospace}
+
+/* ── Photo upload ────────────────────────────────────────── */
+.photo-box{
+  border:1.5px dashed var(--border-mid);border-radius:var(--r-md);
+  padding:20px;text-align:center;background:var(--cream);
+  cursor:pointer;transition:border-color 0.2s,background 0.2s;
+}
+.photo-box:hover{border-color:var(--gold);background:var(--gold-bg)}
+.photo-preview{width:100%;max-height:180px;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--border);margin-top:10px}
+.photo-retake{font-size:12px;color:var(--red);background:none;border:none;cursor:pointer;margin-top:6px;font-family:'DM Sans',sans-serif;font-weight:500}
+
+/* ── Dealer cards ────────────────────────────────────────── */
+.dealers-grid{display:flex;flex-direction:column;gap:12px}
+.dealer-card{
+  background:var(--white);border-radius:var(--r-lg);
+  padding:18px 20px;box-shadow:var(--shadow);
+  border:0.5px solid var(--border);
+  animation:slideUp 0.25s ease;
+}
+.dealer-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.dealer-name{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink);line-height:1.2}
+.dealer-owner{font-size:13px;color:var(--ink-mid);margin-top:2px}
+.cat-badge{
+  flex-shrink:0;font-size:10px;font-weight:700;letter-spacing:0.05em;
+  padding:4px 10px;border-radius:20px;text-transform:uppercase;
+}
+.cat-dealer{background:#e8f4fd;color:#1565c0}
+.cat-dist{background:var(--purple-light,#ede7f6);color:#4527a0}
+.cat-retail{background:var(--gold-bg);color:var(--gold)}
+.dealer-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.meta-pill{
+  display:flex;align-items:center;gap:4px;
+  font-size:12px;color:var(--ink-light);
+  background:var(--cream);border:0.5px solid var(--border);
+  border-radius:20px;padding:4px 10px;
+}
+.dealer-actions{display:flex;gap:8px;flex-wrap:wrap}
+.dealer-expand{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.dealer-expand-row{font-size:13px;color:var(--ink-mid);margin-bottom:6px;display:flex;gap:6px}
+.dealer-expand-row strong{color:var(--ink);min-width:80px;flex-shrink:0}
+.card-img{width:100%;max-height:140px;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--border);margin-top:8px;cursor:pointer}
+
+/* ── Admin table ─────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.stat-card{background:var(--white);border-radius:var(--r-md);padding:16px;border:0.5px solid var(--border);box-shadow:var(--shadow)}
+.stat-label{font-size:11px;font-weight:700;color:var(--ink-light);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.stat-value{font-family:'DM Serif Display',serif;font-size:30px;color:var(--gold)}
+.stat-sub{font-size:11px;color:var(--ink-light);margin-top:2px}
+
+.filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-row select{flex:1;min-width:140px;padding:9px 12px;border:1.5px solid var(--border-mid);border-radius:var(--r-sm);font-size:13px;font-family:'DM Sans',sans-serif;background:var(--white);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none}
+.filter-row select:focus{border-color:var(--gold)}
+.search-box{position:relative;flex:2;min-width:200px}
+.search-box input{width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--border-mid);border-radius:var(--r-sm);font-size:13px;font-family:'DM Sans',sans-serif;background:var(--white);color:var(--ink);outline:none}
+.search-box input:focus{border-color:var(--gold)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--ink-light);pointer-events:none}
+
+/* ── Spinner ─────────────────────────────────────────────── */
+.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:60px}
+.spinner{width:36px;height:36px;border:3px solid var(--cream-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Empty ───────────────────────────────────────────────── */
+.empty-state{text-align:center;padding:60px 24px;color:var(--ink-light)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink-mid);margin-bottom:6px}
+.empty-text{font-size:14px}
+
+/* ── Success screen ──────────────────────────────────────── */
+.success-wrap{text-align:center;padding:48px 24px}
+.success-icon{font-size:64px;margin-bottom:16px;animation:pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--green);margin-bottom:8px}
+.success-sub{font-size:14px;color:var(--ink-light);margin-bottom:28px}
+
+/* ── Toast ───────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:var(--white);
+  padding:11px 22px;border-radius:20px;font-size:13px;font-weight:500;
+  z-index:9999;white-space:nowrap;pointer-events:none;
+  animation:toastIn 0.25s ease;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}}
+
+/* ── Image lightbox ──────────────────────────────────────── */
+.lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9998;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.lightbox.open{display:flex}
+.lightbox img{max-width:100%;max-height:90vh;border-radius:var(--r-md);object-fit:contain}
+.lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ── Spreadsheet table (admin) ───────────────────────────── */
+.dealer-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--white)}
+.tbl-th{background:var(--ink);color:var(--white);padding:10px 12px;text-align:left;font-weight:600;font-size:12px;letter-spacing:0.03em;white-space:nowrap}
+.tbl-th:first-child{border-radius:var(--r-sm) 0 0 0}
+.tbl-th:last-child{border-radius:0 var(--r-sm) 0 0}
+.tbl-td{padding:9px 12px;border-bottom:0.5px solid var(--border);vertical-align:middle}
+.tbl-row:nth-child(even) .tbl-td{background:var(--cream)}
+.tbl-row:nth-child(odd) .tbl-td{background:var(--white)}
+.tbl-row:hover .tbl-td{background:var(--gold-bg)}
+.tbl-outlet{font-weight:600;color:var(--ink);font-size:13px}
+.tbl-sub{font-size:12px;color:var(--ink-light)}
+.tbl-num{color:var(--ink-light);font-size:12px;text-align:center;min-width:32px}
+.tbl-gst{font-family:monospace;font-size:11px}
+.tbl-btn{border:0.5px solid var(--border-mid);background:var(--white);border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;transition:background 0.15s}
+.tbl-btn:hover{background:var(--cream-dark)}
+.tbl-btn-del{border-color:rgba(184,50,50,0.3);background:var(--red-light)}
+.tbl-btn-del:hover{background:#f5c6c6}
+.tbl-btn-edit{border-color:rgba(200,131,26,0.3);background:var(--gold-bg)}
+
+/* ── Utility ─────────────────────────────────────────────── */
+.hidden{display:none!important}
+.mt-8{margin-top:8px}
+.mt-16{margin-top:16px}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+.text-muted{color:var(--ink-light);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ═══════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="logo-wrap">
+      <img src="data:image/jpeg;base64,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kocRBlFNqmOn0lWWIUbppKu8Q3Ceokf91ZEyQNic3HnI5xOV3tablai1TU6ldWugbTagr4a6op2sy2J0Ic2JsZPUBrHlntGFhK/cbeZwbkDPiTgBB60GpLrT6PqtKxTMbbKutirZ2Bg5nSxsexnpd+AHu6efVfG20t8vbobXb4K+4GLJipoWvk5MnqQ0Z5c+J6LmmmtVEOd9ObjOO4SOLIR9Aw536Wr61+prxWUZoTVfFqE/+EpWiGE+9jMBx9rsn2oPbh0RBR+lqnVNlsYBw6nZIayq/wA1BzBp9j3NXYjrNrLTjsrRqPU0w6c9ZVMt8BPn2cYe8j+uFghK4QSD++Y6hby6d0To2y8vqSNtgrJgPz6oyHPtAC6tx3a3Jro+yfrO8U8XUdlRz/FWYPhyxcox7MLCEQd643i7XJxdcbnW1jj3meofJn/zErpZ936FwiDnK9qHVeoo7BPYBeK11pnibE+idKXQ8rZBIMMPQEPGcjrnPmV4iIOT3rhEQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB/9k=" alt="SturliteX" onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'"/>
+      <div id="logo-text" style="display:none;font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;letter-spacing:-0.5px">Sturlite<strong style="font-size:32px">X</strong><sup style="font-size:14px;font-weight:400">®</sup></div>
+      <div class="logo-tagline">Fall In Love With Your Home</div>
+    </div>
+    <h1 class="login-title">Dealer's Universe</h1>
+    <p class="login-sub">Telangana — Please sign in to continue</p>
+    <div id="login-error" class="alert alert-error hidden"></div>
+    <div class="field">
+      <label>Email address <span class="req">*</span></label>
+      <input type="email" id="login-email" placeholder="you@sturlitex.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Password <span class="req">*</span></label>
+      <input type="password" id="login-pass" placeholder="Enter your password" autocomplete="current-password"/>
+    </div>
+    <button class="btn btn-gold" id="login-btn" onclick="doLogin()">Sign in</button>
+    <p style="text-align:center;font-size:12px;color:var(--ink-light);margin-top:16px">Contact admin for your login credentials</p>
+  </div>
+</div>
+
+<!-- ══ APP SCREEN ══════════════════════════════════════════ -->
+<div id="screen-app" class="screen">
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <img src="data:image/jpeg;base64,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kocRBlFNqmOn0lWWIUbppKu8Q3Ceokf91ZEyQNic3HnI5xOV3tablai1TU6ldWugbTagr4a6op2sy2J0Ic2JsZPUBrHlntGFhK/cbeZwbkDPiTgBB60GpLrT6PqtKxTMbbKutirZ2Bg5nSxsexnpd+AHu6efVfG20t8vbobXb4K+4GLJipoWvk5MnqQ0Z5c+J6LmmmtVEOd9ObjOO4SOLIR9Aw536Wr61+prxWUZoTVfFqE/+EpWiGE+9jMBx9rsn2oPbh0RBR+lqnVNlsYBw6nZIayq/wA1BzBp9j3NXYjrNrLTjsrRqPU0w6c9ZVMt8BPn2cYe8j+uFghK4QSD++Y6hby6d0To2y8vqSNtgrJgPz6oyHPtAC6tx3a3Jro+yfrO8U8XUdlRz/FWYPhyxcox7MLCEQd643i7XJxdcbnW1jj3meofJn/zErpZ936FwiDnK9qHVeoo7BPYBeK11pnibE+idKXQ8rZBIMMPQEPGcjrnPmV4iIOT3rhEQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB/9k=" alt="SturliteX" onerror="this.style.display='none';document.getElementById('topbar-text').style.display='block'"/>
+      <div id="topbar-text" style="display:none;font-family:'DM Serif Display',serif;font-size:18px">SturliteX</div>
+      <div style="width:1px;height:24px;background:var(--border);margin:0 10px"></div>
+      <div class="topbar-info">Dealer's Universe · Telangana</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div>
+        <div class="topbar-user"><div class="avatar" id="user-avatar">A</div><span id="user-name-display">User</span></div>
+        <div style="font-size:11px;color:var(--ink-light);text-align:right" id="user-cluster-display"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="padding:8px 12px;font-size:12px">Sign out</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('register')" id="tab-register">+ Register Outlet</button>
+    <button class="tab-btn" onclick="switchTab('my-dealers')" id="tab-my-dealers">My Dealers</button>
+    <button class="tab-btn hidden" onclick="switchTab('admin')" id="tab-admin">Admin Dashboard</button>
+  </div>
+
+  <!-- ── REGISTER TAB ──────────────────────────────────── -->
+  <div id="tab-content-register" class="page-content">
+    <div id="register-success" class="hidden">
+      <div class="success-wrap">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Dealer Registered!</div>
+        <div class="success-sub">The outlet has been saved to the Dealer Universe.</div>
+        <button class="btn btn-gold" style="max-width:280px;margin:0 auto" onclick="resetForm()">Register Another Outlet</button>
+      </div>
+    </div>
+
+    <div id="register-form-wrap">
+      <div class="form-card">
+        <div class="form-card-title">Register New Outlet</div>
+        <div class="form-card-sub">Please review for accuracy before submission. Fields marked * are mandatory.</div>
+
+        <div id="form-error" class="alert alert-error hidden"></div>
+
+        <!-- Outlet details -->
+        <div class="section-divider"><span>Outlet Details</span></div>
+
+        <div class="field">
+          <label>Outlet Name <span class="req">*</span></label>
+          <input type="text" id="f-outlet" placeholder="e.g. Sai Electricals" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label>Owner Name <span class="req">*</span></label>
+          <input type="text" id="f-owner" placeholder="Full name of owner/contact"/>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Phone Number <span class="req">*</span></label>
+            <input type="tel" id="f-phone" placeholder="Primary WhatsApp number" maxlength="10"/>
+            <div class="field-hint">10-digit mobile number</div>
+          </div>
+          <div class="field">
+            <label>GST Number <span class="req">*</span></label>
+            <input type="text" id="f-gst" placeholder="15-digit GSTIN" maxlength="15" style="text-transform:uppercase"/>
+            <div class="field-hint">Mandatory for all outlets</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>City / Town <span class="req">*</span></label>
+            <input type="text" id="f-city" placeholder="e.g. Hyderabad, Warangal"/>
+          </div>
+          <div class="field">
+            <label>Outlet Category <span class="req">*</span></label>
+            <select id="f-category">
+              <option value="" disabled selected>Select type</option>
+              <option>Electricals Dealer</option>
+              <option>Distributor</option>
+              <option>Retailer / Counter</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Full Address</label>
+          <textarea id="f-address" placeholder="Shop no., street, landmark, area, PIN"></textarea>
+        </div>
+
+        <!-- Executive / Zone (pre-filled, read-only) -->
+        <div class="section-divider"><span>Territory</span></div>
+        <div class="field-row">
+          <div class="field">
+            <label>Executive</label>
+            <input type="text" id="f-executive" readonly style="background:var(--cream-dark);color:var(--ink-mid);cursor:not-allowed"/>
+          </div>
+          <div class="field">
+            <label>Cluster / Zone</label>
+            <input type="text" id="f-cluster" readonly style="background:var(--cream-dark);color:var(--ink-mid);cursor:not-allowed"/>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="section-divider"><span>Location</span></div>
+        <div class="field">
+          <label>Outlet Location <span class="req">*</span></label>
+          <div class="location-box" id="location-box" onclick="captureLocation()">
+            <div class="location-icon">📍</div>
+            <div class="location-text">Tap to capture GPS location</div>
+            <div class="location-sub">Stand inside or in front of the shop</div>
+          </div>
+          <div class="field-hint mt-8">Location is captured automatically from your phone's GPS and linked to Google Maps.</div>
+        </div>
+
+        <!-- Visiting Card -->
+        <div class="section-divider"><span>Visiting Card</span></div>
+        <div class="field">
+          <label>Visiting Card Photo <span class="req">*</span></label>
+          <input type="file" id="f-card-input" accept="image/*" capture="environment" style="display:none" onchange="handleCardUpload(event)"/>
+          <div class="photo-box" id="photo-box" onclick="document.getElementById('f-card-input').click()">
+            <div style="font-size:32px;margin-bottom:6px">📷</div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink-mid)">Take photo or upload</div>
+            <div style="font-size:12px;color:var(--ink-light);margin-top:3px">Click to open camera or file picker</div>
+          </div>
+          <div id="card-preview-wrap" class="hidden">
+            <img id="card-preview-img" class="photo-preview" alt="Visiting card preview"/>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+              <span style="font-size:12px;color:var(--green);font-weight:600">✅ Photo ready</span>
+              <button class="photo-retake" onclick="removeCard()">✕ Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remarks -->
+        <div class="section-divider"><span>Additional Info</span></div>
+        <div class="field">
+          <label>Remarks <span style="font-weight:400;color:var(--ink-light)">(optional)</span></label>
+          <textarea id="f-remarks" placeholder="e.g. Currently inactive, prefers competitor brand, large counter, potential distributor..."></textarea>
+        </div>
+
+        <div style="margin-top:8px">
+          <button class="btn btn-gold" id="submit-btn" onclick="submitDealer()">Submit Registration</button>
+          <p style="text-align:center;font-size:12px;color:var(--ink-light);margin-top:10px">You cannot edit this entry after submission. Contact admin for any corrections.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MY DEALERS TAB ────────────────────────────────── -->
+  <div id="tab-content-my-dealers" class="page-content hidden">
+    <div class="stats-grid" id="my-stats-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div>
+    <div class="search-box" style="margin-bottom:14px">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search by name, town, phone..." oninput="filterMyDealers(this.value)" id="my-search"/>
+    </div>
+    <div id="my-dealers-list"></div>
+  </div>
+
+  <!-- ── ADMIN TAB ─────────────────────────────────────── -->
+  <div id="tab-content-admin" class="page-content hidden" style="max-width:900px">
+    <div class="stats-grid" id="admin-stats-grid"></div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn btn-gold btn-sm" onclick="exportToExcel()" style="width:auto;padding:10px 18px">⬇ Export to Excel</button>
+      <button class="btn btn-outline btn-sm" onclick="syncToGoogleSheets()" style="width:auto;padding:10px 18px">🔗 Sync to Google Sheets</button>
+    </div>
+    <div class="filter-row">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search outlets..." oninput="filterAdminDealers()" id="admin-search"/>
+      </div>
+      <select onchange="filterAdminDealers()" id="admin-filter-exec"><option value="">All Executives</option></select>
+      <select onchange="filterAdminDealers()" id="admin-filter-cat">
+        <option value="">All Categories</option>
+        <option>Electricals Dealer</option>
+        <option>Distributor</option>
+        <option>Retailer / Counter</option>
+      </select>
+    </div>
+    <div id="admin-dealers-count" class="text-muted" style="margin-bottom:12px"></div>
+    <div id="admin-dealers-list"></div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;overflow-y:auto;padding:20px">
+  <div style="background:var(--white);border-radius:var(--r-xl);padding:28px 24px;max-width:500px;margin:0 auto">
+    <div style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:4px">Edit Dealer</div>
+    <div style="font-size:13px;color:var(--ink-light);margin-bottom:20px">Admin only — changes saved immediately to database</div>
+    <div class="field"><label class="form-label">Outlet Name</label><input class="form-input" id="edit-outlet"/></div>
+    <div class="field"><label class="form-label">Owner Name</label><input class="form-input" id="edit-owner"/></div>
+    <div class="field"><label class="form-label">Phone</label><input class="form-input" id="edit-phone"/></div>
+    <div class="field"><label class="form-label">GST Number</label><input class="form-input" id="edit-gst" style="text-transform:uppercase"/></div>
+    <div class="field"><label class="form-label">City / Town</label><input class="form-input" id="edit-city"/></div>
+    <div class="field"><label class="form-label">Category</label>
+      <select class="form-select" id="edit-category">
+        <option>Electricals Dealer</option><option>Distributor</option><option>Retailer / Counter</option>
+      </select>
+    </div>
+    <div class="field"><label class="form-label">Address</label><textarea class="form-textarea" id="edit-address"></textarea></div>
+    <div class="field"><label class="form-label">Remarks</label><textarea class="form-textarea" id="edit-remarks"></textarea></div>
+    <input type="hidden" id="edit-dealer-id"/>
+    <div id="edit-error" class="alert alert-error hidden"></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-gold" onclick="saveEdit()">Save Changes</button>
+      <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Google Sheets Modal -->
+<div id="sheets-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;padding:20px">
+  <div style="background:var(--white);border-radius:var(--r-xl);padding:28px 24px;max-width:480px;margin:40px auto">
+    <div style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:4px">Sync to Google Sheets</div>
+    <div style="font-size:13px;color:var(--ink-light);margin-bottom:16px">Paste your Google Apps Script Web App URL</div>
+    <div class="field">
+      <label class="form-label">Web App URL</label>
+      <input class="form-input" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec"/>
+    </div>
+    <div style="background:var(--cream);border-radius:var(--r-sm);padding:12px 14px;font-size:12px;color:var(--ink-mid);margin-bottom:16px;line-height:1.8">
+      <strong>One-time setup:</strong><br>
+      1. Open Google Sheets → Extensions → Apps Script<br>
+      2. Paste the Apps Script I'll provide → Deploy as Web App → Anyone<br>
+      3. Copy the URL → paste above → Sync
+    </div>
+    <div id="sheets-status" style="font-size:13px;color:var(--green);margin-bottom:12px"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-gold" onclick="doSheetsSync()">Sync Now</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('sheets-modal').style.display='none'">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt=""/>
+</div>
+
+<!-- ══ FIREBASE + APP LOGIC ═══════════════════════════════ -->
+<script type="module">
+import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+                                                   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, orderBy, serverTimestamp }
+                                                   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// Storage via base64 in Firestore — no Firebase Storage needed
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyCqC9q8TtbvvztjZmVQtYgYkJIqByGTPC4",
+  authDomain:        "sturlite-dealer-universe-a50d6.firebaseapp.com",
+  projectId:         "sturlite-dealer-universe-a50d6",
+  storageBucket:     "sturlite-dealer-universe-a50d6.firebasestorage.app",
+  messagingSenderId: "1020321304899",
+  appId:             "1:1020321304899:web:69ff6d5e7e7acb83fa5ff6"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── Executive → Cluster mapping ────────────────────────────
+const EXEC_MAP = {
+  "prakashgoud19941994@gmail.com": { name:"Prakash",    cluster:"Zone-1 Hyderabad" },
+  "joshvithartham@gmail.com":      { name:"Joshvith",   cluster:"Zone-4 Hyderabad" },
+  "mudhirajchintu532@gmail.com":   { name:"Shekar",     cluster:"Mahabubnagar" },
+  "saidulumudiga187@gmail.com":    { name:"Saidulu",    cluster:"Nalgonda" },
+  "kirankumar.vulli@gmail.com":    { name:"Kiran",      cluster:"Khammam" },
+  "srikanthjenda@gmail.com":       { name:"J Srikanth", cluster:"Warangal" },
+  "srikanthsunrise8@gmail.com":    { name:"Ch Srikanth",cluster:"Nizamabad & Adilabad" },
+  "saikumarpettam@gmail.com":      { name:"Sai Kumar",  cluster:"Mancherial & Jagtial" },
+  "dheerajrockz333@gmail.com":     { name:"Dheeraj",    cluster:"Karimnagar & Siddipet" },
+  "akeyjain@gmail.com":            { name:"Ankit",      cluster:"Admin", role:"admin" },
+  "tcs.rajendra@gmail.com":        { name:"Rajendra",   cluster:"Admin", role:"admin" },
+  "info.sturlitehyderabad@gmail.com": { name:"Provision-1", cluster:"Admin", role:"admin" },
+  "hydsepldata@gmail.com":         { name:"Provision-2", cluster:"Admin", role:"admin" },
+};
+
+// ── State ──────────────────────────────────────────────────
+let currentUser    = null;
+let currentProfile = null;
+let locationData   = null;
+let cardFile       = null;
+let allMyDealers   = [];
+let allAdminDealers= [];
+
+// ── Expose globals ─────────────────────────────────────────
+window.doLogin    = doLogin;
+window.doLogout   = doLogout;
+window.switchTab  = switchTab;
+window.captureLocation = captureLocation;
+window.handleCardUpload= handleCardUpload;
+window.removeCard = removeCard;
+window.submitDealer    = submitDealer;
+window.resetForm  = resetForm;
+window.filterMyDealers = filterMyDealers;
+window.filterAdminDealers = filterAdminDealers;
+window.openLightbox = openLightbox;
+window.closeLightbox= closeLightbox;
+window.openEditModal  = openEditModal;
+window.closeEditModal = closeEditModal;
+window.saveEdit       = saveEdit;
+window.deleteDealer   = deleteDealer;
+window.exportToExcel  = exportToExcel;
+window.syncToGoogleSheets = syncToGoogleSheets;
+window.doSheetsSync   = doSheetsSync;
+
+// ── Auth state ─────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (user) {
+    currentUser    = user;
+    currentProfile = EXEC_MAP[user.email] || { name: user.email, cluster:"Unknown" };
+    showApp();
+  } else {
+    currentUser = null;
+    show("screen-login");
+  }
+});
+
+function showApp() {
+  show("screen-app");
+  // Set user display
+  const name = currentProfile.name;
+  document.getElementById("user-avatar").textContent = name[0].toUpperCase();
+  document.getElementById("user-name-display").textContent = name;
+  document.getElementById("user-cluster-display").textContent = currentProfile.cluster;
+  // Pre-fill executive/cluster fields
+  document.getElementById("f-executive").value = name;
+  document.getElementById("f-cluster").value   = currentProfile.cluster;
+  // Show admin tab if admin
+  if (currentProfile.role === "admin") {
+    document.getElementById("tab-admin").classList.remove("hidden");
+  }
+  switchTab("register");
+}
+
+// ── Login ──────────────────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById("login-email").value.trim();
+  const pass  = document.getElementById("login-pass").value;
+  const btn   = document.getElementById("login-btn");
+  const errEl = document.getElementById("login-error");
+  errEl.classList.add("hidden");
+  if (!email || !pass) { showErr(errEl, "Please enter email and password."); return; }
+  btn.textContent = "Signing in..."; btn.disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    showErr(errEl, "Invalid email or password. Please try again.");
+    btn.textContent = "Sign in"; btn.disabled = false;
+  }
+}
+
+async function doLogout() {
+  await signOut(auth);
+  show("screen-login");
+  hide("screen-app");
+}
+
+// ── Tabs ───────────────────────────────────────────────────
+function switchTab(tab) {
+  ["register","my-dealers","admin"].forEach(t => {
+    document.getElementById(`tab-${t}`)?.classList.toggle("active", t===tab);
+    document.getElementById(`tab-content-${t}`)?.classList.toggle("hidden", t!==tab);
+  });
+  if (tab === "my-dealers") loadMyDealers();
+  if (tab === "admin")      loadAdminDealers();
+}
+
+// ── Location ───────────────────────────────────────────────
+function captureLocation() {
+  const box = document.getElementById("location-box");
+  box.innerHTML = `<div class="location-icon">⏳</div><div class="location-text">Getting your location...</div><div class="location-sub">Please allow location access</div>`;
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      locationData = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      const mapsUrl = `https://maps.google.com/?q=${locationData.lat},${locationData.lng}`;
+      box.classList.add("captured");
+      box.innerHTML = `
+        <div class="location-icon">✅</div>
+        <div class="location-text" style="color:var(--green)">Location Captured</div>
+        <div class="location-coords">${locationData.lat.toFixed(6)}, ${locationData.lng.toFixed(6)}</div>
+        <a href="${mapsUrl}" target="_blank" rel="noreferrer" style="font-size:12px;color:var(--gold);font-weight:600;margin-top:6px;display:inline-block" onclick="event.stopPropagation()">🗺 Verify on Google Maps ↗</a>
+        <div style="font-size:11px;color:var(--ink-light);margin-top:4px;cursor:pointer" onclick="event.stopPropagation();retakeLocation()">Retake location</div>`;
+      box.onclick = null;
+    },
+    () => {
+      box.classList.add("error-state");
+      box.innerHTML = `<div class="location-icon">❌</div><div class="location-text" style="color:var(--red)">Location access denied</div><div class="location-sub">Enable location in browser settings, then tap to retry</div>`;
+      box.onclick = captureLocation;
+    },
+    { enableHighAccuracy:true, timeout:15000 }
+  );
+}
+
+window.retakeLocation = function() {
+  locationData = null;
+  const box = document.getElementById("location-box");
+  box.classList.remove("captured","error-state");
+  box.innerHTML = `<div class="location-icon">📍</div><div class="location-text">Tap to capture GPS location</div><div class="location-sub">Stand inside or in front of the shop</div>`;
+  box.onclick = captureLocation;
+};
+
+// ── Card photo ─────────────────────────────────────────────
+function handleCardUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  cardFile = file;
+  const url = URL.createObjectURL(file);
+  document.getElementById("photo-box").classList.add("hidden");
+  document.getElementById("card-preview-wrap").classList.remove("hidden");
+  document.getElementById("card-preview-img").src = url;
+}
+
+function removeCard() {
+  cardFile = null;
+  document.getElementById("f-card-input").value = "";
+  document.getElementById("card-preview-wrap").classList.add("hidden");
+  document.getElementById("photo-box").classList.remove("hidden");
+}
+
+// ── Compress image to base64 ───────────────────────────────
+function compressAndEncodeImage(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxW = 800, maxH = 800;
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = h * maxW / w; w = maxW; }
+        if (h > maxH) { w = w * maxH / h; h = maxH; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.6));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Submit dealer ──────────────────────────────────────────
+async function submitDealer() {
+  const errEl = document.getElementById("form-error");
+  errEl.classList.add("hidden");
+
+  const outlet   = document.getElementById("f-outlet").value.trim();
+  const owner    = document.getElementById("f-owner").value.trim();
+  const phone    = document.getElementById("f-phone").value.replace(/\D/g,"");
+  const gst      = document.getElementById("f-gst").value.trim().toUpperCase();
+  const city     = document.getElementById("f-city").value.trim();
+  const category = document.getElementById("f-category").value;
+  const address  = document.getElementById("f-address").value.trim();
+  const remarks  = document.getElementById("f-remarks").value.trim();
+
+  if (!outlet)              return showErr(errEl,"Outlet name is required.");
+  if (!owner)               return showErr(errEl,"Owner name is required.");
+  if (phone.length !== 10)  return showErr(errEl,"Phone number must be 10 digits.");
+  if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gst))
+                            return showErr(errEl,"Please enter a valid 15-character GST number.");
+  if (!city)                return showErr(errEl,"City / Town is required.");
+  if (!category)            return showErr(errEl,"Please select an outlet category.");
+  if (!locationData)        return showErr(errEl,"Please capture the outlet GPS location.");
+  if (!cardFile)            return showErr(errEl,"Please upload the visiting card photo.");
+
+  const btn = document.getElementById("submit-btn");
+  btn.textContent = "Saving..."; btn.disabled = true;
+
+  try {
+    // Convert visiting card to compressed base64 and store directly in Firestore
+    const cardUrl = await compressAndEncodeImage(cardFile);
+
+    // Save to Firestore
+    await addDoc(collection(db,"dealers"), {
+      uid:        currentUser.uid,
+      executive:  currentProfile.name,
+      cluster:    currentProfile.cluster,
+      outlet, owner, phone, gst, city, category, address, remarks,
+      lat:        locationData.lat,
+      lng:        locationData.lng,
+      mapsLink:   `https://maps.google.com/?q=${locationData.lat},${locationData.lng}`,
+      cardUrl,
+      createdAt:  serverTimestamp(),
+    });
+
+    document.getElementById("register-form-wrap").classList.add("hidden");
+    document.getElementById("register-success").classList.remove("hidden");
+  } catch(e) {
+    showErr(errEl,"Submission failed. Check your connection and try again. " + e.message);
+    btn.textContent = "Submit Registration"; btn.disabled = false;
+  }
+}
+
+function resetForm() {
+  ["f-outlet","f-owner","f-phone","f-gst","f-city","f-address","f-remarks"].forEach(id => document.getElementById(id).value="");
+  document.getElementById("f-category").value="";
+  locationData = null; cardFile = null;
+  window.retakeLocation();
+  removeCard();
+  document.getElementById("register-success").classList.add("hidden");
+  document.getElementById("register-form-wrap").classList.remove("hidden");
+  document.getElementById("submit-btn").textContent="Submit Registration";
+  document.getElementById("submit-btn").disabled=false;
+  window.scrollTo(0,0);
+}
+
+// ── My Dealers ─────────────────────────────────────────────
+async function loadMyDealers() {
+  document.getElementById("my-dealers-list").innerHTML = `<div class="spinner-wrap"><div class="spinner"></div></div>`;
+  try {
+    const q    = query(collection(db,"dealers"), where("uid","==",currentUser.uid), orderBy("createdAt","desc"));
+    const snap = await getDocs(q);
+    allMyDealers = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderMyStats();
+    renderMyDealers(allMyDealers);
+  } catch(e) {
+    document.getElementById("my-dealers-list").innerHTML = `<div class="alert alert-error">Failed to load dealers. Make sure Firestore index is created. ${e.message}</div>`;
+  }
+}
+
+function renderMyStats() {
+  const d = allMyDealers;
+  document.getElementById("my-stats-grid").innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Outlets</div><div class="stat-value">${d.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Dealers</div><div class="stat-value">${d.filter(x=>x.category==="Electricals Dealer").length}</div></div>
+    <div class="stat-card"><div class="stat-label">Distributors</div><div class="stat-value">${d.filter(x=>x.category==="Distributor").length}</div></div>`;
+}
+
+function filterMyDealers(val) {
+  const s = val.toLowerCase();
+  renderMyDealers(s ? allMyDealers.filter(d =>
+    d.outlet?.toLowerCase().includes(s) || d.owner?.toLowerCase().includes(s) ||
+    d.city?.toLowerCase().includes(s)   || d.phone?.includes(s)
+  ) : allMyDealers);
+}
+
+function renderMyDealers(list) {
+  if (!list.length) {
+    document.getElementById("my-dealers-list").innerHTML = `<div class="empty-state"><div class="empty-icon">🏪</div><div class="empty-title">No dealers yet</div><div class="empty-text">Register your first outlet using the Register tab.</div></div>`;
+    return;
+  }
+  const rows = list.map((d, i) => dealerCard({...d, __idx: i+1}, false)).join("");
+  document.getElementById("my-dealers-list").innerHTML = `
+    <div style="overflow-x:auto;border-radius:var(--r-lg);border:0.5px solid var(--border);box-shadow:var(--shadow)">
+      <table class="dealer-table">
+        <thead>
+          <tr>
+            <th class="tbl-th">#</th>
+            <th class="tbl-th">Outlet / Owner</th>
+            <th class="tbl-th">Type</th>
+            <th class="tbl-th">City</th>
+            <th class="tbl-th">Phone</th>
+            <th class="tbl-th">GST</th>
+            <th class="tbl-th">Registered</th>
+            <th class="tbl-th">Actions</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+// ── Admin Dealers ──────────────────────────────────────────
+async function loadAdminDealers() {
+  document.getElementById("admin-dealers-list").innerHTML = `<div class="spinner-wrap"><div class="spinner"></div></div>`;
+  try {
+    const q    = query(collection(db,"dealers"), orderBy("createdAt","desc"));
+    const snap = await getDocs(q);
+    allAdminDealers = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAdminStats();
+
+    // Populate exec filter
+    const execs = [...new Set(allAdminDealers.map(d=>d.executive).filter(Boolean))].sort();
+    const sel   = document.getElementById("admin-filter-exec");
+    sel.innerHTML = `<option value="">All Executives</option>` + execs.map(e=>`<option>${e}</option>`).join("");
+
+    filterAdminDealers();
+  } catch(e) {
+    document.getElementById("admin-dealers-list").innerHTML = `<div class="alert alert-error">Failed to load. ${e.message}</div>`;
+  }
+}
+
+function renderAdminStats() {
+  const d = allAdminDealers;
+  const clusters = [...new Set(d.map(x=>x.cluster))];
+  document.getElementById("admin-stats-grid").innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Outlets</div><div class="stat-value">${d.length}</div><div class="stat-sub">Across Telangana</div></div>
+    <div class="stat-card"><div class="stat-label">Dealers</div><div class="stat-value">${d.filter(x=>x.category==="Electricals Dealer").length}</div></div>
+    <div class="stat-card"><div class="stat-label">Distributors</div><div class="stat-value">${d.filter(x=>x.category==="Distributor").length}</div></div>
+    <div class="stat-card"><div class="stat-label">Clusters Active</div><div class="stat-value">${clusters.length}</div><div class="stat-sub">of 15 zones</div></div>`;
+}
+
+function filterAdminDealers() {
+  const search = document.getElementById("admin-search").value.toLowerCase();
+  const exec   = document.getElementById("admin-filter-exec").value;
+  const cat    = document.getElementById("admin-filter-cat").value;
+  let list = allAdminDealers;
+  if (exec)   list = list.filter(d => d.executive === exec);
+  if (cat)    list = list.filter(d => d.category  === cat);
+  if (search) list = list.filter(d =>
+    d.outlet?.toLowerCase().includes(search) || d.owner?.toLowerCase().includes(search) ||
+    d.city?.toLowerCase().includes(search)   || d.executive?.toLowerCase().includes(search) ||
+    d.phone?.includes(search) || d.gst?.toLowerCase().includes(search)
+  );
+  document.getElementById("admin-dealers-count").textContent = `${list.length} of ${allAdminDealers.length} outlets`;
+  document.getElementById("admin-dealers-list").innerHTML = list.length
+    ? adminTable(list)
+    : `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No results</div></div>`;
+}
+
+// ── Admin spreadsheet table ────────────────────────────────
+function adminTable(list) {
+  const catClass = {"Electricals Dealer":"cat-dealer","Distributor":"cat-dist","Retailer / Counter":"cat-retail"};
+  const rows = list.map((d, i) => `
+    <tr class="tbl-row" id="card-${d.id}">
+      <td class="tbl-td tbl-num">${i+1}</td>
+      <td class="tbl-td"><div class="tbl-outlet">${esc(d.outlet)}</div><div class="tbl-sub">${esc(d.owner)}</div></td>
+      <td class="tbl-td"><span class="cat-badge ${catClass[d.category]||"cat-dealer"}">${esc(d.category?.split(" ")[0]||"")}</span></td>
+      <td class="tbl-td">${esc(d.city)}</td>
+      <td class="tbl-td tbl-sub">${esc(d.cluster)}</td>
+      <td class="tbl-td tbl-sub">${esc(d.executive)}</td>
+      <td class="tbl-td"><a href="tel:${esc(d.phone)}" style="color:var(--ink-mid);text-decoration:none">${esc(d.phone)}</a></td>
+      <td class="tbl-td tbl-sub tbl-gst">${esc(d.gst||"—")}</td>
+      <td class="tbl-td tbl-sub">${d.createdAt?.toDate?.()?.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})||"—"}</td>
+      <td class="tbl-td">
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          ${d.mapsLink ? `<a href="${esc(d.mapsLink)}" target="_blank" class="tbl-btn tbl-btn-map" title="Open in Maps">🗺</a>` : ""}
+          ${d.cardUrl  ? `<button class="tbl-btn tbl-btn-card" onclick="openLightbox('${esc(d.cardUrl)}')" title="View visiting card">🪪</button>` : ""}
+          <a href="https://wa.me/91${esc(d.phone)}" target="_blank" class="tbl-btn tbl-btn-wa" title="WhatsApp">💬</a>
+          <button class="tbl-btn tbl-btn-edit" onclick="openEditModal('${d.id}')" title="Edit">✏️</button>
+          <button class="tbl-btn tbl-btn-del" onclick="deleteDealer('${d.id}','${esc(d.outlet)}')" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`).join("");
+
+  return `
+  <div style="overflow-x:auto;border-radius:var(--r-lg);border:0.5px solid var(--border);box-shadow:var(--shadow)">
+    <table class="dealer-table">
+      <thead>
+        <tr>
+          <th class="tbl-th">#</th>
+          <th class="tbl-th">Outlet / Owner</th>
+          <th class="tbl-th">Type</th>
+          <th class="tbl-th">City</th>
+          <th class="tbl-th">Cluster</th>
+          <th class="tbl-th">Executive</th>
+          <th class="tbl-th">Phone</th>
+          <th class="tbl-th">GST</th>
+          <th class="tbl-th">Registered</th>
+          <th class="tbl-th">Actions</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// ── TSM dealer table ───────────────────────────────────────
+function dealerCard(d, isAdmin) {
+  const catClass = {"Electricals Dealer":"cat-dealer","Distributor":"cat-dist","Retailer / Counter":"cat-retail"}[d.category]||"cat-dealer";
+  return `
+  <tr class="tbl-row" id="card-${d.id}">
+    <td class="tbl-td tbl-num">${esc(d.__idx||"")}</td>
+    <td class="tbl-td"><div class="tbl-outlet">${esc(d.outlet)}</div><div class="tbl-sub">👤 ${esc(d.owner)}</div></td>
+    <td class="tbl-td"><span class="cat-badge ${catClass}">${esc(d.category?.split(" ")[0]||"")}</span></td>
+    <td class="tbl-td tbl-sub">${esc(d.city)}</td>
+    <td class="tbl-td"><a href="tel:${esc(d.phone)}" style="color:var(--ink-mid);text-decoration:none">${esc(d.phone)}</a></td>
+    <td class="tbl-td tbl-sub tbl-gst">${esc(d.gst||"—")}</td>
+    <td class="tbl-td tbl-sub">${d.createdAt?.toDate?.()?.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})||"—"}</td>
+    <td class="tbl-td">
+      <div style="display:flex;gap:4px;flex-wrap:wrap">
+        ${d.mapsLink ? `<a href="${esc(d.mapsLink)}" target="_blank" class="tbl-btn tbl-btn-map" title="Open in Maps">🗺</a>` : ""}
+        ${d.cardUrl  ? `<button class="tbl-btn tbl-btn-card" onclick="openLightbox('${esc(d.cardUrl)}')" title="View card">🪪</button>` : ""}
+        <a href="https://wa.me/91${esc(d.phone)}" target="_blank" class="tbl-btn tbl-btn-wa" title="WhatsApp">💬</a>
+      </div>
+    </td>
+  </tr>`;
+}
+
+// ── Edit dealer ────────────────────────────────────────────
+function openEditModal(id) {
+  const d = allAdminDealers.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById("edit-dealer-id").value = id;
+  document.getElementById("edit-outlet").value   = d.outlet  || "";
+  document.getElementById("edit-owner").value    = d.owner   || "";
+  document.getElementById("edit-phone").value    = d.phone   || "";
+  document.getElementById("edit-gst").value      = d.gst     || "";
+  document.getElementById("edit-city").value     = d.city    || "";
+  document.getElementById("edit-category").value = d.category|| "";
+  document.getElementById("edit-address").value  = d.address || "";
+  document.getElementById("edit-remarks").value  = d.remarks || "";
+  document.getElementById("edit-error").classList.add("hidden");
+  document.getElementById("edit-modal").style.display = "block";
+}
+
+function closeEditModal() { document.getElementById("edit-modal").style.display = "none"; }
+
+async function saveEdit() {
+  const id      = document.getElementById("edit-dealer-id").value;
+  const errEl   = document.getElementById("edit-error");
+  const outlet  = document.getElementById("edit-outlet").value.trim();
+  const owner   = document.getElementById("edit-owner").value.trim();
+  const phone   = document.getElementById("edit-phone").value.trim();
+  const gst     = document.getElementById("edit-gst").value.trim().toUpperCase();
+  const city    = document.getElementById("edit-city").value.trim();
+  const category= document.getElementById("edit-category").value;
+  const address = document.getElementById("edit-address").value.trim();
+  const remarks = document.getElementById("edit-remarks").value.trim();
+  if (!outlet || !owner || !city) { errEl.textContent="Outlet name, owner and city are required."; errEl.classList.remove("hidden"); return; }
+  try {
+    await updateDoc(doc(db,"dealers",id), { outlet, owner, phone, gst, city, category, address, remarks });
+    const idx = allAdminDealers.findIndex(x=>x.id===id);
+    if (idx > -1) allAdminDealers[idx] = {...allAdminDealers[idx], outlet, owner, phone, gst, city, category, address, remarks};
+    closeEditModal();
+    filterAdminDealers();
+    showToast("Dealer updated successfully");
+  } catch(e) {
+    errEl.textContent = "Update failed: " + e.message;
+    errEl.classList.remove("hidden");
+  }
+}
+
+async function deleteDealer(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  try {
+    await deleteDoc(doc(db,"dealers",id));
+    allAdminDealers = allAdminDealers.filter(x=>x.id!==id);
+    filterAdminDealers();
+    renderAdminStats();
+    showToast("Dealer deleted");
+  } catch(e) {
+    showToast("Delete failed: " + e.message);
+  }
+}
+
+// ── Export to Excel ────────────────────────────────────────
+function exportToExcel() {
+  if (!allAdminDealers.length) { showToast("No data to export"); return; }
+  const headers = ["Outlet Name","Owner","Phone","GST","City","Category","Cluster","Executive","Address","Latitude","Longitude","Maps Link","Remarks","Registered Date"];
+  const rows = allAdminDealers.map(d => [
+    d.outlet, d.owner, d.phone, d.gst, d.city, d.category,
+    d.cluster, d.executive, d.address, d.lat, d.lng, d.mapsLink,
+    d.remarks, d.createdAt?.toDate?.()?.toLocaleDateString("en-IN")||""
+  ]);
+  // Build CSV then convert to Excel-compatible format
+  const csvContent = [headers, ...rows].map(row =>
+    row.map(cell => `"${String(cell||"").replace(/"/g,'""')}"`).join(",")
+  ).join("\n");
+  const BOM = "\uFEFF";
+  const blob = new Blob([BOM + csvContent], {type:"text/csv;charset=utf-8"});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url;
+  a.download = `SturliteX_Dealers_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${allAdminDealers.length} dealers to CSV (opens in Excel)`);
+}
+
+// ── Google Sheets Sync ─────────────────────────────────────
+function syncToGoogleSheets() {
+  document.getElementById("sheets-modal").style.display = "block";
+  document.getElementById("sheets-status").textContent = "";
+}
+
+async function doSheetsSync() {
+  const url = document.getElementById("sheets-url").value.trim();
+  const statusEl = document.getElementById("sheets-status");
+  if (!url) { statusEl.textContent = "Please enter the Web App URL."; statusEl.style.color="var(--red)"; return; }
+  if (!allAdminDealers.length) { statusEl.textContent = "No dealer data to sync."; return; }
+  statusEl.textContent = "Syncing..."; statusEl.style.color="var(--ink-mid)";
+  const payload = allAdminDealers.map(d => ({
+    outlet:d.outlet, owner:d.owner, phone:d.phone, gst:d.gst,
+    city:d.city, category:d.category, cluster:d.cluster, executive:d.executive,
+    address:d.address, lat:d.lat, lng:d.lng, mapsLink:d.mapsLink,
+    remarks:d.remarks, date:d.createdAt?.toDate?.()?.toLocaleDateString("en-IN")||""
+  }));
+  try {
+    const res = await fetch(url, {method:"POST", body:JSON.stringify({dealers:payload}), headers:{"Content-Type":"application/json"}});
+    const txt = await res.text();
+    statusEl.textContent = "✅ Synced " + allAdminDealers.length + " dealers to Google Sheets!";
+    statusEl.style.color = "var(--green)";
+  } catch(e) {
+    statusEl.textContent = "Sync failed. Check the URL and try again.";
+    statusEl.style.color = "var(--red)";
+  }
+}
+
+// ── Lightbox ───────────────────────────────────────────────
+function openLightbox(url) {
+  document.getElementById("lightbox-img").src = url;
+  document.getElementById("lightbox").classList.add("open");
+}
+function closeLightbox() { document.getElementById("lightbox").classList.remove("open"); }
+
+// ── Helpers ────────────────────────────────────────────────
+function show(id) { document.getElementById(id).classList.add("active"); document.getElementById(id).style.display="flex"; }
+function hide(id) { document.getElementById(id).classList.remove("active"); document.getElementById(id).style.display="none"; }
+function showErr(el, msg) { el.textContent=msg; el.classList.remove("hidden"); el.scrollIntoView({behavior:"smooth",block:"center"}); }
+function esc(s){ const d=document.createElement("div"); d.textContent=String(s||""); return d.innerHTML; }
+
+function showToast(msg) {
+  const t=document.createElement("div"); t.className="toast"; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(),2800);
+}
+
+// Enter key on login
+document.getElementById("login-pass").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
+document.getElementById("login-email").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("login-pass").focus(); });
+</script>
+</body>
+</html>
